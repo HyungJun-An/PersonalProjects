@@ -11,6 +11,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
+@ToString(exclude = {"comments", "likesList"})
 @Table(name="board")
 public class Board {
 
@@ -41,8 +42,9 @@ public class Board {
     private List<Like> likesList;
 
     @Builder
-    public Board(String title, String content) {
+    public Board(String title, String content, String writer) {
         this.title = title;
         this.content = content;
+        this.writer = writer;
     }
 }

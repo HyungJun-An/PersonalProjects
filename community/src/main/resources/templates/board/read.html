@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div align="center">
+    <input th:value="${boards.title}" readonly /> <button id="ModifyBtn">수정하기</button>
+    <br>
+    <input th:value="${boards.content}" readonly />
+</div>
+<script>
+    ModifyBtn = document.getElementById("ModifyBtn");
+    ModifyBtn.addEventListener("click", function (e){
+        e.stopPropagation();
+        e.preventDefault();
+    },false);
+</script>
+</body>
+</html>
