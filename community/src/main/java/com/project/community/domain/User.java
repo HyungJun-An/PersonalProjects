@@ -10,8 +10,8 @@ import lombok.*;
 public class User {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Column(updatable = false, nullable = false)
+    private String id;
 
     @Column(nullable = false)
     private String nickname;
@@ -23,11 +23,10 @@ public class User {
     private String email;
 
     @Builder
-    public User(String nickname, String password, String email) {
+    public User(String id, String nickname, String password, String email) {
+        this.id = id;
         this.nickname = nickname;
         this.password = password;
         this.email = email;
-
     }
-
 }
