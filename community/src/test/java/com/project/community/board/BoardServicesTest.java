@@ -5,6 +5,9 @@ import com.project.community.service.BoardService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 import java.util.stream.IntStream;
@@ -18,9 +21,9 @@ public class BoardServicesTest {
     @Test
     public void writeTest() {
 
-        IntStream.rangeClosed(1,20).forEach(i -> {
+        IntStream.rangeClosed(1,100).forEach(i -> {
 
-            boardService.write("제목"+i, i+"번째내용","user"+i);
+            boardService.write("페이징"+i, i+"번째내용","user"+i);
         });
     }
 
@@ -32,7 +35,7 @@ public class BoardServicesTest {
 
     @Test
     public void searchTest() {
-        List<Board> result =boardService.search("테스트", "", "");
-        System.out.println(result + "!!!!!!!!!!!");
+        Pageable pageable = PageRequest.of(0, 10);
+        Page<Board> result =boardService.search("테스트", "", "", pageable);
     }
 }

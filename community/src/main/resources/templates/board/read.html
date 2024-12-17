@@ -2,20 +2,33 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>상세 게시글</title>
 </head>
 <body>
 <div align="center">
     <input th:value="${boards.title}" readonly /> <button id="ModifyBtn">수정하기</button>
     <br>
     <input th:value="${boards.content}" readonly />
+    <br>
+    <button id ="LikeBtn">좋아요</button>
 </div>
-<script>
+<script th:inline="javascript">
+    //수정버튼
     ModifyBtn = document.getElementById("ModifyBtn");
     ModifyBtn.addEventListener("click", function (e){
         e.stopPropagation();
         e.preventDefault();
+        const board_id = /*[[${boards.board_id}]]*/[];
+
+        location.href='../modify/'+board_id;
     },false);
+
+    //좋아요버튼
+    LikeBtn = document.getElementById("LikeBtn");
+    LikeBtn.addEventListener("click", function(e) {
+        e.stopPropagation();
+        e.preventDefault();
+    }, false);
 </script>
 </body>
 </html>
