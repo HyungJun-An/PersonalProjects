@@ -2,14 +2,79 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>수정페이지</title>
+    <title>수정 페이지</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            padding: 30px;
+            width: 500px;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 24px;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        input[type="text"], textarea {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+            resize: none;
+        }
+
+        input[type="text"]:focus, textarea:focus {
+            outline: none;
+            border-color: #1e90ff;
+            background-color: #fff;
+        }
+
+        button[type="submit"] {
+            background-color: #1e90ff;
+            color: white;
+            font-size: 16px;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button[type="submit"]:hover {
+            background-color: #56ccf2;
+        }
+    </style>
 </head>
 <body>
-<form method="post" th:action="@{/board/modifyproc/{id} (id=${board.board_id})}">
-<input th:value="${board.title}" name="title"/>
-<input th:value="${board.content}" name="content"/>
-    <button type="submit">수정</button>
-</form>
-
+<div class="container">
+    <h1>게시글 수정</h1>
+    <form method="post" th:action="@{/board/modifyproc/{id} (id=${board.board_id})}">
+        <input type="text" th:value="${board.title}" name="title" placeholder="제목" required/>
+        <textarea th:text="${board.content}" name="content" rows="8" placeholder="내용을 입력하세요" required></textarea>
+        <button type="submit">수정하기</button>
+    </form>
+</div>
 </body>
 </html>

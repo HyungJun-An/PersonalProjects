@@ -21,7 +21,7 @@ public class BoardServicesTest {
     @Test
     public void writeTest() {
 
-        IntStream.rangeClosed(1,100).forEach(i -> {
+        IntStream.rangeClosed(1,200).forEach(i -> {
 
             boardService.write("페이징"+i, i+"번째내용","user"+i);
         });

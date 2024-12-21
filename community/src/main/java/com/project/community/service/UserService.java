@@ -18,7 +18,8 @@ public class UserService {
     /*
     회원가입
      */
-    public void signup(String id, String nickname, String password, String email) {
+    public void signup(String id, String email, String nickname, String password) {
+
         User user = User.builder()
                 .id(id)
                 .nickname(nickname)

@@ -3,11 +3,13 @@ package com.project.community.domain;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.io.Serializable;
+
 @Entity
 @Getter
 @Setter
 @NoArgsConstructor
-public class User {
+public class User implements Serializable {
 
     @Id
     @Column(updatable = false, nullable = false)
@@ -23,7 +25,7 @@ public class User {
     private String email;
 
     @Builder
-    public User(String id, String nickname, String password, String email) {
+    public User(String id, String nickname, String password, String email)  {
         this.id = id;
         this.nickname = nickname;
         this.password = password;

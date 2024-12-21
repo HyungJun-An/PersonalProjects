@@ -3,9 +3,167 @@
 <head>
     <meta charset="UTF-8">
     <title>게시글 조회</title>
+    <style>
+        /* 기본적인 리셋 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+
+        /* 페이지 전체 레이아웃 */
+        .container {
+            width: 80%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: white;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+
+        /* 제목 */
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #4CAF50;
+        }
+
+        /* 검색 바 */
+        .search {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .search select,
+        .search input[type="text"] {
+            padding: 10px;
+            margin-right: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        .search button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .search button:hover {
+            background-color: #45a049;
+        }
+
+        /* 로그인 / 회원가입 영역 */
+        .user-info {
+            text-align: right;
+            margin-bottom: 20px;
+        }
+
+        .user-info a {
+            margin: 0 10px;
+            color: #007BFF;
+            text-decoration: none;
+        }
+
+        .user-info a:hover {
+            text-decoration: underline;
+        }
+
+        .user-info p {
+            font-size: 18px;
+            color: #333;
+        }
+
+        .user-info button {
+            padding: 6px 10px;
+            background-color: #c42c4a;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .wrtBtn button {
+            padding: 6px 10px;
+            background-color: #3251f1;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-bottom: 2px;
+        }
+        /* 게시글 테이블 */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        table th, table td {
+            padding: 12px;
+            text-align: center;
+            border: 1px solid #ddd;
+        }
+
+        table th {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        table tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        table a {
+            color: #007BFF;
+            text-decoration: none;
+        }
+
+        table a:hover {
+            text-decoration: underline;
+        }
+
+        /* 페이지 네비게이션 */
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .footer a {
+            margin: 0 10px;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+
+        .footer a:hover {
+            background-color: #45a049;
+        }
+
+        .footer span {
+            font-size: 18px;
+            color: #333;
+        }
+    </style>
 </head>
 <body>
-<div align="center" >
+<div class="container">
     <form method="post" action="/board/list/search">
         <div class="search">
             <select name="type">
@@ -13,47 +171,59 @@
                 <option value="content">내용</option>
                 <option value="writer">작성자</option>
             </select>
-            <input type="text" name="input"/>
-            <!-- page hidden으로 전달  -->
+            <input type="text" name="input" placeholder="검색어를 입력하세요..."/>
             <input type="hidden" name="page" th:value="${boards.number}"/>
             <button type="submit">검색</button>
         </div>
-        <div>
-            <table border="1">
-                <tr>
-                    <th>글쓴이</th>
-                    <th>Title</th>
-                    <th>시간</th>
-                    <th>좋아요</th>
-                </tr>
-                <tr th:each="board : ${boards}">
-                    <td th:text="${board.writer}"></td>
-                    <td>
-                        <a th:text="${board.title}" th:href="@{/board/read/{id}(id=${board.board_id})}"></a>
-                    </td>
-                    <td th:text="${#temporals.format(board.created, 'yyyy-MM-dd HH:mm')}"></td>
-                    <td th:text="${board.likes}"></td>
-                </tr>
-            </table>
-        </div>
     </form>
+
+    <div class="user-info" th:if="${session.user}">
+        <p th:text="|환영합니다, ${session.user.nickname}님!|"></p>
+        <div class="wrtBtn">
+        <button onclick="location.href='/board/write'">글 작성</button>
+        </div>
+        <form method="POST" action="/user/logout">
+            <button type="submit">로그아웃</button>
+        </form>
+    </div>
+    <div class="user-info" th:unless="${session.user}">
+        <a href="/user/login">로그인</a>
+        <a href="/user/signup">회원가입</a>
+    </div>
+
+    <div>
+        <table>
+            <tr>
+                <th>글쓴이</th>
+                <th>Title</th>
+                <th>시간</th>
+                <th>좋아요</th>
+            </tr>
+            <tr th:each="board : ${boards}">
+                <td th:text="${board.writer}"></td>
+                <td>
+                    <a th:text="${board.title}" th:href="@{/board/read/{id}(id=${board.board_id})}"></a>
+                </td>
+                <td th:text="${#temporals.format(board.created, 'yyyy-MM-dd HH:mm')}"></td>
+                <td th:text="${board.likes}"></td>
+            </tr>
+        </table>
+    </div>
+
     <div class="footer">
         <div>
-            <!-- 이전 페이지 그룹 -->
             <a th:if="${startPage > 1}"
                th:href="@{/board/list(page=${startPage - 2}, type=${param.type}, input=${param.input})}">이전</a>
 
-            <!-- 페이지 번호 반복 출력 -->
             <span th:each="pageNum : ${#numbers.sequence(startPage, endPage)}">
                 <a th:if="${pageNum - 1 != boards.number}"
-                    th:href="@{/board/list(page=${pageNum - 1}, type=${param.type}, input=${param.input})}"
-                    th:text="${pageNum}"></a>
+                   th:href="@{/board/list(page=${pageNum - 1}, type=${param.type}, input=${param.input})}"
+                   th:text="${pageNum}"></a>
                 <span th:if="${pageNum - 1 == boards.number}"
-                  th:text="${pageNum}">
+                      th:text="${pageNum}">
                 </span>
             </span>
 
-            <!-- 다음 페이지 그룹 -->
             <a th:if="${endPage < boards.totalPages}"
                th:href="@{/board/list(page=${endPage}, type=${param.type}, input=${param.input})}">다음</a>
         </div>

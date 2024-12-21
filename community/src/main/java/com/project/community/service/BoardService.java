@@ -2,6 +2,7 @@ package com.project.community.service;
 
 import com.project.community.domain.Board;
 import com.project.community.repository.BoardRepository;
+import com.project.community.repository.LikeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -17,6 +18,8 @@ import java.util.List;
 public class BoardService {
 
     private final BoardRepository boardRepository;
+    private final LikeRepository likeRepository;
+    private final LikeService likeService;
 
     /*
     게시글 작성
@@ -83,5 +86,16 @@ public class BoardService {
     public void update(Long board_id, String title, String content) {
 
         boardRepository.updateBoard(board_id, title, content);
+    }
+
+    /*
+    게시글 삭제
+     */
+    public void delete(Long board_id) {
+
+        // 해당 게시글 좋아요 목록 삭제
+        likeService.deleteBoardLikes(board_id);
+        //게시글 삭제
+        boardRepository.deleteById(board_id);
     }
 }

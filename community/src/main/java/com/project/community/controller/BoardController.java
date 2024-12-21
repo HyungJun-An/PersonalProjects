@@ -4,6 +4,7 @@ package com.project.community.controller;
 import com.project.community.domain.Board;
 import com.project.community.repository.BoardRepository;
 import com.project.community.service.BoardService;
+import com.project.community.service.LikeService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.*;
@@ -23,6 +24,7 @@ public class BoardController {
 
     private final BoardService boardService;
     private final BoardRepository boardRepository;
+    private final LikeService likeService;
 
     @GetMapping("/modify/{id}") //게시글 수정 GET 요청
     public String modifydo(@PathVariable Long id, Model model) {
@@ -109,6 +111,13 @@ public class BoardController {
         log.info("content:"+content);
 
         boardService.write(title, content, writer);
+
+        return "redirect:/board/list";
+    }
+
+    @GetMapping("/remove/{boardId}")
+    public String remove(@PathVariable Long boardId) {
+        boardService.delete(boardId);
 
         return "redirect:/board/list";
     }

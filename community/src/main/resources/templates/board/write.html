@@ -2,17 +2,84 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8">
-  <title>글작성</title>
+  <title>글 작성</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f9;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .container {
+      background-color: white;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      padding: 30px;
+      width: 500px;
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 24px;
+      color: #333;
+      margin-bottom: 20px;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    input[type="text"], textarea {
+      width: 100%;
+      padding: 10px;
+      font-size: 16px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      background-color: #f9f9f9;
+      resize: none;
+    }
+
+    textarea {
+      height: 150px;
+    }
+
+    input[type="text"]:focus, textarea:focus {
+      outline: none;
+      border-color: #1e90ff;
+      background-color: #fff;
+    }
+
+    button[type="submit"] {
+      background-color: #1e90ff;
+      color: white;
+      font-size: 16px;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    button[type="submit"]:hover {
+      background-color: #56ccf2;
+    }
+  </style>
 </head>
 <body>
-<div align="center">
+<div class="container">
+  <h1>글 작성</h1>
   <form method="post" action="/board/writeproc">
-    제목 <input type="text" name="title">
-    내용 <input type="textarea" name="content">
-    작성자 <input type="text" name="writer">
-    <button type="submit">등록</button>
+    <input type="text" name="title" placeholder="제목을 입력하세요" required>
+    <textarea name="content" placeholder="내용을 입력하세요" required></textarea>
+    <input type="text" name="writer" th:value="${session.user.nickname}" hidden>
+    <button type="submit">등록하기</button>
   </form>
 </div>
-
 </body>
 </html>

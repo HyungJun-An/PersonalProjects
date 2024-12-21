@@ -1,8 +1,10 @@
 package com.project.community.controller;
 
+import com.project.community.domain.User;
 import com.project.community.repository.UserRepository;
-import com.project.community.service.BoardService;
 import com.project.community.service.UserService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Controller;
@@ -20,21 +22,30 @@ public class UserController {
 
     private final UserRepository userRepository;
     private final UserService userService;
-    private final BoardService boardService;
 
     @GetMapping("login")
     public String login() {
         return "/user/login";
     }
 
+    @PostMapping("/logout")
+    public String logout(HttpSession session) {
+        session.invalidate();
+        return "redirect:/board/list";
+    }
+
     @PostMapping("loginproc")
     public String loginproc(@RequestParam("id") String id,
                             @RequestParam("password") String password,
+                            HttpServletRequest request,
                             RedirectAttributes redirectAttributes) {
 
         boolean success = userService.loginAvailable(id, password);
         if (success) {
             //로그인 성공시 게시글 조회 리다이렉트
+            User user = userRepository.findById(id).orElseThrow(RuntimeException::new);
+            HttpSession session = request.getSession();
+            session.setAttribute("user", user);
             return "redirect:/board/list";
         } else {
             // 실패 시 에러 메세지 로그인화면 리다이렉트
