@@ -30,6 +30,16 @@ public class UserService {
         userRepository.save(user);
     }
 
+    /*
+    회원정보 수정
+     */
+    public void update(String id, String nickname, String password, String email) {
+        User user = userRepository.findById(id).orElseThrow();
+        user.setNickname(nickname);
+        user.setPassword(password);
+        user.setEmail(email);
+        userRepository.save(user);
+    }
     /****************************
     ; Rest                      ;
     ****************************/

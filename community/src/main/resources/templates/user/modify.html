@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>회원 정보 수정</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .update-container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 400px;
+        }
+
+        .update-container button:disabled {
+            background-color: #ddd;
+            cursor: not-allowed;
+            color: #aaa;
+        }
+
+        .update-container h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .update-container input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .update-container button {
+            width: 100%;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .update-container button:hover {
+            background-color: #45a049;
+        }
+
+        .update-container .error-message {
+            color: red;
+            font-size: 14px;
+            text-align: center;
+        }
+
+        .update-container .duplicate-check-btn {
+            padding: 8px 16px;
+            background-color: #2196F3;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .update-container .duplicate-check-btn:hover {
+            background-color: #1976D2;
+        }
+
+        .update-container .footer {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .update-container .footer a {
+            text-decoration: none;
+            color: #2196F3;
+        }
+
+        .update-container .footer a:hover {
+            text-decoration: underline;
+        }
+
+        .password-match-message {
+            font-size: 14px;
+            color: red;
+        }
+
+        .password-match-message.valid {
+            color: green;
+        }
+    </style>
+</head>
+<body>
+
+<div class="update-container">
+    <h2>회원 정보 수정</h2>
+    <form method="POST" action="/user/updateproc">
+        <!-- 아이디 (수정 불가) -->
+        <label for="id">아이디</label>
+        <input type="text" id="id" name="id" th:value="${session.user.id}" readonly>
+
+        <!-- 닉네임 -->
+        <label for="nickname">닉네임</label>
+        <input type="text" id="nickname" name="nickname" placeholder="닉네임" required onblur="checkNickname()" th:value="${session.user.nickname}">
+        <button type="button" class="duplicate-check-btn" onclick="checkNickname()">닉네임 중복 확인</button>
+
+        <!-- 비밀번호 -->
+        <label for="password">새 비밀번호</label>
+        <input type="password" id="password" name="password" placeholder="새 비밀번호" th:value="${session.user.password}">
+
+        <!-- 비밀번호 확인 -->
+        <label for="password-confirm">새 비밀번호 확인</label>
+        <input type="password" id="password-confirm" name="password-confirm" placeholder="새 비밀번호 확인" onkeyup="checkPasswordMatch()" th:value="${session.user.password}">
+        <div id="password-match-message" class="password-match-message valid">비밀번호가 일치합니다.</div>
+
+        <!-- 이메일 -->
+        <label for="email">이메일</label>
+        <input type="email" id="email" name="email" placeholder="이메일" required th:value="${session.user.email}">
+
+        <button type="submit" id="update-btn" disabled>정보 수정</button>
+    </form>
+
+    <div class="footer">
+        <a href="/board/list">프로필로 돌아가기</a>
+    </div>
+</div>
+
+<script>
+    let isNicknameValid = false;
+    let isPasswordConfirmed = true; // 비밀번호 미변경 시 기본 true
+
+    // 닉네임 중복 확인 함수
+    function checkNickname() {
+        var nickname = document.getElementById("nickname").value;
+        if(nickname) {
+            fetch(`/api/check-nickname?nickname=${nickname}`)
+                .then(response => response.json())
+                .then(data => {
+                    if(data) {
+                        alert("사용 가능한 닉네임 입니다.");
+                        isNicknameValid = true;
+                        toggleUpdateButton();
+                    } else {
+                        alert("이미 존재하는 닉네임 입니다.");
+                        isNicknameValid = false;
+                        toggleUpdateButton();
+                    }
+                })
+                .catch(error => {
+                    console.error("닉네임 중복 오류 :" + error);
+                    alert("오류가 발생했습니다.");
+                });
+        } else {
+            alert("닉네임을 입력해주세요.");
+            isNicknameValid = false;
+            toggleUpdateButton();
+        }
+    }
+
+    // 비밀번호 확인 함수
+    function checkPasswordMatch() {
+        var password = document.getElementById("password").value;
+        var passwordConfirm = document.getElementById("password-confirm").value;
+        var message = document.getElementById("password-match-message");
+
+        if (password || passwordConfirm) {
+            if (password === passwordConfirm) {
+                message.textContent = "비밀번호가 일치합니다.";
+                message.classList.remove("invalid");
+                message.classList.add("valid");
+                isPasswordConfirmed = true;
+            } else {
+                message.textContent = "비밀번호가 일치하지 않습니다.";
+                message.classList.remove("valid");
+                message.classList.add("invalid");
+                isPasswordConfirmed = false;
+            }
+        } else {
+            isPasswordConfirmed = true; // 비밀번호 변경하지 않는 경우
+        }
+        toggleUpdateButton();
+    }
+
+    document.getElementById("password").addEventListener("input", checkPasswordMatch);
+    document.getElementById("password-confirm").addEventListener("input", checkPasswordMatch);
+
+    // 버튼 활성화/비활성화 상태 체크
+    function toggleUpdateButton() {
+        const updateButton = document.getElementById("update-btn");
+        if (isNicknameValid && isPasswordConfirmed) {
+            updateButton.disabled = false;
+        } else {
+            updateButton.disabled = true;
+        }
+    }
+</script>
+
+</body>
+</html>

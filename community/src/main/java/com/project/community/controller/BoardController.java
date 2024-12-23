@@ -1,6 +1,5 @@
 package com.project.community.controller;
 
-
 import com.project.community.domain.Board;
 import com.project.community.repository.BoardRepository;
 import com.project.community.service.BoardService;
@@ -38,13 +37,10 @@ public class BoardController {
     @PostMapping("/modifyproc/{id}")
     public String modifyproc(@PathVariable Long id, String title, String content) {
 
-//        boardService.update(id, title, content);
-        log.info("시작");
         Board result = boardRepository.findById(id).orElseThrow(RuntimeException::new);
         result.setTitle(title);
         result.setContent(content);
         boardRepository.save(result);
-        log.info("끝");
 
         return "redirect:/board/list";
     }

@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>아이디 찾기 결과</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .result-container {
+      background-color: white;
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      width: 400px;
+      text-align: center;
+    }
+
+    .result-container h2 {
+      color: #4CAF50;
+      margin-bottom: 20px;
+    }
+
+    .result-container p {
+      font-size: 16px;
+      margin-bottom: 20px;
+    }
+
+    .result-container .highlight {
+      color: #2196F3;
+      font-weight: bold;
+    }
+
+    .result-container .back-btn {
+      display: inline-block;
+      padding: 10px 20px;
+      background-color: #4CAF50;
+      color: white;
+      text-decoration: none;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+
+    .result-container .back-btn:hover {
+      background-color: #45a049;
+    }
+  </style>
+</head>
+<body>
+
+<div class="result-container">
+  <h2>아이디 찾기 결과</h2>
+  <p th:if="${user}">해당 이메일로 가입된 아이디는 <span class="highlight" th:text="${user.id}"></span> 입니다.</p>
+  <p th:if="${user}==null">해당 이메일로 가입된 아이디가 없습니다.</p>
+  <a href="/user/login" class="back-btn">로그인 화면으로 이동</a>
+</div>
+
+</body>
+</html>
