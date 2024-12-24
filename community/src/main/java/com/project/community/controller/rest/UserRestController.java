@@ -1,7 +1,6 @@
 package com.project.community.controller.rest;
 
 import com.project.community.domain.User;
-import com.project.community.repository.UserRepository;
 import com.project.community.service.LikeService;
 import com.project.community.service.UserService;
 import jakarta.servlet.http.HttpSession;
@@ -22,8 +21,6 @@ public class UserRestController {
     private UserService userService;
     @Autowired
     private LikeService likeService;
-    @Autowired
-    private UserRepository userRepository;
 
     /*
     아이디 중복확인
@@ -44,20 +41,6 @@ public class UserRestController {
     }
 
     /*
-    회원 삭제 시 비밀번호 확인
-     */
-    @GetMapping("verify-password")
-    public ResponseEntity<Boolean> verifyPassword(@RequestParam("id")String id,@RequestParam("password") String password) {
-        boolean confirm = userService.loginAvailable(id, password);
-
-        if(confirm) {
-            likeService.deleteUserLikes(id);
-            userRepository.deleteById(id);
-        }
-        return ResponseEntity.ok(confirm);
-    }
-
-    /*
     게시글 좋아요 기능
      */
     @PostMapping("like/{boardId}")
@@ -72,9 +55,6 @@ public class UserRestController {
         return ResponseEntity.ok(liked);
     }
 
-    /*
-    게시글 좋아요 확인
-     */
     @GetMapping("like-check/{boardId}")
     public ResponseEntity<Boolean> likeCheck(@PathVariable("boardId") Long boardId, HttpSession session) {
         User user = (User) session.getAttribute("user");
@@ -85,9 +65,6 @@ public class UserRestController {
         return ResponseEntity.ok(liked);
     }
 
-    /*
-    게시글 좋아요 개수 조회
-     */
     @GetMapping("like-count/{boardId}")
     public ResponseEntity<Integer> getLikeCount(@PathVariable Long boardId) {
         int likeCount = likeService.getLikeCount(boardId);
