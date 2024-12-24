@@ -75,4 +75,11 @@ public class LikeService {
     public void deleteBoardLikes(Long boardId) {
         likeRepository.deleteByBoardId(boardId);
     }
+
+    /*
+    회원 삭제시 해당 회원의 좋아요 목록 삭제
+     */
+    public void deleteUserLikes(String id) {
+        likeRepository.deleteByUserId(id);
+    }
 }

@@ -4,6 +4,53 @@
     <meta charset="UTF-8">
     <title>회원 정보 수정</title>
     <style>
+        /* 모달 스타일 */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            width: 300px;
+            text-align: center;
+        }
+
+        .modal-content input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .modal-content button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .confirm-btn {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        .cancel-btn {
+            background-color: #f44336;
+            color: white;
+        }
+
         body {
             font-family: Arial, sans-serif;
             background-color: #f4f4f4;
@@ -42,6 +89,22 @@
             border-radius: 4px;
         }
 
+        .update-container .remove-container  button {
+            width: 100%;
+            padding: 10px;
+            background-color: #e86363;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 5px;
+        }
+
+        .update-container .remove-container button:hover {
+            background-color: #d53b3b;
+        }
+
         .update-container button {
             width: 100%;
             padding: 10px;
@@ -56,6 +119,7 @@
         .update-container button:hover {
             background-color: #45a049;
         }
+
 
         .update-container .error-message {
             color: red;
@@ -130,16 +194,37 @@
         <input type="email" id="email" name="email" placeholder="이메일" required th:value="${session.user.email}">
 
         <button type="submit" id="update-btn" disabled>정보 수정</button>
+        <div class="remove-container">
+            <button type="button" id="remove-btn">삭제</button>
+        </div>
     </form>
+
 
     <div class="footer">
         <a href="/board/list">프로필로 돌아가기</a>
     </div>
 </div>
 
-<script>
+<!-- 모달 -->
+<div id="delete-modal" class="modal">
+    <div class="modal-content">
+        <h3>비밀번호 확인</h3>
+        <input type="password" id="password-input" placeholder="비밀번호 입력">
+        <div>
+            <button id="confirm-btn" class="confirm-btn">확인</button>
+            <button id="cancel-btn" class="cancel-btn">취소</button>
+        </div>
+    </div>
+</div>
+
+<script th:inline="javascript">
     let isNicknameValid = false;
     let isPasswordConfirmed = true; // 비밀번호 미변경 시 기본 true
+    const modal = document.getElementById("delete-modal");
+    const confirmBtn = document.getElementById("confirm-btn");
+    const cancelBtn = document.getElementById("cancel-btn");
+    const passwordInput = document.getElementById("password-input");
+    const Id = document.getElementById("id");
 
     // 닉네임 중복 확인 함수
     function checkNickname() {
@@ -205,6 +290,57 @@
             updateButton.disabled = true;
         }
     }
+
+    const RemoveBtn = document.getElementById("remove-btn");
+    RemoveBtn.addEventListener("click", function(e) {
+       e.stopPropagation();
+       e.stopPropagation();
+        modal.style.display = "flex";
+
+    });
+
+    // 확인 버튼 클릭 시 비밀번호 검증
+    confirmBtn.addEventListener("click", function () {
+
+        const id = Id.value;
+        const password = passwordInput.value;
+
+        if (!password) {
+            alert("비밀번호를 입력해주세요.");
+            return;
+        }
+
+        // 서버로 비밀번호 확인 요청
+        fetch(`/api/verify-password?id=${id}&password=${password}`)
+            .then((response) => response.ok ? response.json() : Promise.reject())
+            .then((data) => {
+                if (data) {
+                    alert("삭제가 완료되었습니다.");
+
+                    modal.style.display = "none";
+
+
+                } else {
+                    alert("비밀번호가 일치하지 않습니다.");
+                }
+            })
+            .catch((error) => {
+                console.error("Error:", error);
+                alert("오류가 발생했습니다.");
+            });
+    });
+
+    // 취소 버튼 클릭 시 모달 닫기
+    cancelBtn.addEventListener("click", function () {
+        modal.style.display = "none";
+    });
+
+    // 모달 외부 클릭 시 닫기
+    window.addEventListener("click", function (e) {
+        if (e.target === modal) {
+            modal.style.display = "none";
+        }
+    });
 </script>
 
 </body>
